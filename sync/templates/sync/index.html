@@ -1,0 +1,21 @@
+{% extends 'sync/base_html.html' %}
+
+{% block title %}
+	Comments list
+{% endblock %}
+
+{% block content %}
+	<h1 class="mb-5">Comments:</h1>
+	{% for comment in comments %}
+		<div class="card mb-4">
+			<div class="card-header">
+				{{ comment["date"] }}
+			</div>
+			<div class="card-body">
+				<h5 class="card-title">{{ comment['from_id'] }}</h5>
+				<p class="card-text">{{ comment['text']|truncatewords:15 }}</p>
+				<!-- <a href="{{ comment.get_absolute_url }}" class="btn btn-primary">Read</a> -->
+			</div>
+		</div>
+	{% endfor %}
+{% endblock %}
