@@ -6,10 +6,11 @@
 #   * Make sure each ForeignKey has `on_delete` set to the desired behavior.
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
+from itertools import product
+
 from django.db import models
-
-
-
+from datetime import datetime
+from dateutil import parser
 
 
 class ContactsHistory(models.Model):
@@ -129,7 +130,8 @@ class ShopCategory(models.Model):
     meta_description = models.TextField(blank=True, null=True)
     type = models.IntegerField()
     url = models.CharField(max_length=255, blank=True, null=True)
-    full_url = models.CharField(unique=True, max_length=255, blank=True, null=True)
+    full_url = models.CharField(unique=True, max_length=255, blank=True,
+                                null=True)
     count = models.IntegerField()
     description = models.TextField(blank=True, null=True)
     conditions = models.TextField(blank=True, null=True)
@@ -218,7 +220,8 @@ class ShopCoupon(models.Model):
     type = models.CharField(max_length=3)
     limit = models.IntegerField(blank=True, null=True)
     used = models.IntegerField()
-    value = models.DecimalField(max_digits=15, decimal_places=4, blank=True, null=True)
+    value = models.DecimalField(max_digits=15, decimal_places=4, blank=True,
+                                null=True)
     comment = models.TextField(blank=True, null=True)
     expire_datetime = models.DateTimeField(blank=True, null=True)
     create_datetime = models.DateTimeField()
@@ -232,7 +235,8 @@ class ShopCoupon(models.Model):
 class ShopCurrency(models.Model):
     code = models.CharField(primary_key=True, max_length=3)
     rate = models.DecimalField(max_digits=18, decimal_places=10)
-    rounding = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
+    rounding = models.DecimalField(max_digits=8, decimal_places=2, blank=True,
+                                   null=True)
     round_up_only = models.IntegerField()
     sort = models.IntegerField()
 
@@ -388,7 +392,8 @@ class ShopFollowup(models.Model):
     subject = models.TextField()
     body = models.TextField()
     last_cron_time = models.DateTimeField()
-    from_field = models.CharField(db_column='from', max_length=32, blank=True, null=True)  # Field renamed because it was a Python reserved word.
+    from_field = models.CharField(db_column='from', max_length=32, blank=True,
+                                  null=True)  # Field renamed because it was a Python reserved word.
     source = models.CharField(max_length=64, blank=True, null=True)
     status = models.IntegerField()
     transport = models.CharField(max_length=5)
@@ -477,7 +482,8 @@ class ShopOrderItems(models.Model):
     virtualstock_id = models.IntegerField(blank=True, null=True)
     purchase_price = models.DecimalField(max_digits=15, decimal_places=4)
     total_discount = models.DecimalField(max_digits=15, decimal_places=4)
-    tax_percent = models.DecimalField(max_digits=7, decimal_places=4, blank=True, null=True)
+    tax_percent = models.DecimalField(max_digits=7, decimal_places=4,
+                                      blank=True, null=True)
     tax_included = models.IntegerField()
 
     class Meta:
@@ -612,14 +618,52 @@ class ShopProduct(models.Model):
     category_id = models.IntegerField(blank=True, null=True)
     badge = models.TextField(blank=True, null=True)
     sku_type = models.IntegerField()
-    base_price_selectable = models.DecimalField(max_digits=15, decimal_places=4)
-    compare_price_selectable = models.DecimalField(max_digits=15, decimal_places=4)
-    purchase_price_selectable = models.DecimalField(max_digits=15, decimal_places=4)
+    base_price_selectable = models.DecimalField(max_digits=15,
+                                                decimal_places=4)
+    compare_price_selectable = models.DecimalField(max_digits=15,
+                                                   decimal_places=4)
+    purchase_price_selectable = models.DecimalField(max_digits=15,
+                                                    decimal_places=4)
     sku_count = models.IntegerField()
+
+    @property
+    def saved_date(self):
+        "Дата сохранения инфы о продукте в VK"
+        params_filter = ShopProductParams.objects.filter(
+            product_id=self.id, name='saved_date')
+        if not params_filter.exists():
+            return None
+        else:
+            product_param = params_filter.first()
+        return parser.parse(product_param.value)
+
+    @saved_date.setter
+    def saved_date(self, saved_date):
+        if not self.saved_date:
+            product_param = ShopProductParams(
+                product_id=self.id,
+                name='saved_date',
+                value=saved_date,
+            )
+            product_param.save()
+        else:
+            params_filter = ShopProductParams.objects.filter(
+                product_id=self.id, name='saved_date')
+            params = params_filter.first()
+            params.saved_date = saved_date
+            params.save()
 
     class Meta:
         managed = False
         db_table = 'shop_product'
+
+    def is_changed(self):
+        """ Проверям не изменялся ли продукт """
+        if not self.edit_datetime or not self.saved_date:
+            return False
+        elif self.saved_date != self.edit_datetime:
+            return True
+        return False
 
 
 class ShopProductFeatures(models.Model):
@@ -631,7 +675,8 @@ class ShopProductFeatures(models.Model):
     class Meta:
         managed = False
         db_table = 'shop_product_features'
-        unique_together = (('product_id', 'sku_id', 'feature_id', 'feature_value_id'),)
+        unique_together = (
+        ('product_id', 'sku_id', 'feature_id', 'feature_value_id'),)
 
 
 class ShopProductFeaturesSelectable(models.Model):
@@ -728,7 +773,8 @@ class ShopProductReviews(models.Model):
     status = models.CharField(max_length=8)
     title = models.CharField(max_length=64, blank=True, null=True)
     text = models.TextField(blank=True, null=True)
-    rate = models.DecimalField(max_digits=3, decimal_places=2, blank=True, null=True)
+    rate = models.DecimalField(max_digits=3, decimal_places=2, blank=True,
+                               null=True)
     contact_id = models.PositiveIntegerField()
     name = models.CharField(max_length=50, blank=True, null=True)
     email = models.CharField(max_length=50, blank=True, null=True)
@@ -746,14 +792,17 @@ class ShopProductServices(models.Model):
     sku_id = models.IntegerField(blank=True, null=True)
     service_id = models.IntegerField()
     service_variant_id = models.IntegerField()
-    price = models.DecimalField(max_digits=15, decimal_places=4, blank=True, null=True)
-    primary_price = models.DecimalField(max_digits=15, decimal_places=4, blank=True, null=True)
+    price = models.DecimalField(max_digits=15, decimal_places=4, blank=True,
+                                null=True)
+    primary_price = models.DecimalField(max_digits=15, decimal_places=4,
+                                        blank=True, null=True)
     status = models.IntegerField()
 
     class Meta:
         managed = False
         db_table = 'shop_product_services'
-        unique_together = (('product_id', 'sku_id', 'service_id', 'service_variant_id'),)
+        unique_together = (
+        ('product_id', 'sku_id', 'service_id', 'service_variant_id'),)
 
 
 class ShopProductSkus(models.Model):
@@ -1019,7 +1068,8 @@ class ShopTaxZipCodes(models.Model):
 
 
 class ShopTransfer(models.Model):
-    string_id = models.CharField(unique=True, max_length=255, blank=True, null=True)
+    string_id = models.CharField(unique=True, max_length=255, blank=True,
+                                 null=True)
     create_datetime = models.DateTimeField(blank=True, null=True)
     finalize_datetime = models.DateTimeField(blank=True, null=True)
     status = models.CharField(max_length=9)
@@ -1351,7 +1401,8 @@ class WaContactCategories(models.Model):
 
 class WaContactCategory(models.Model):
     name = models.CharField(max_length=255)
-    system_id = models.CharField(unique=True, max_length=64, blank=True, null=True)
+    system_id = models.CharField(unique=True, max_length=64, blank=True,
+                                 null=True)
     app_id = models.CharField(max_length=32, blank=True, null=True)
     icon = models.CharField(max_length=255, blank=True, null=True)
     cnt = models.IntegerField()

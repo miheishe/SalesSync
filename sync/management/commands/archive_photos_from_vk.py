@@ -5,7 +5,6 @@ from django.conf import settings
 from django.core.management import BaseCommand
 from django.db import transaction
 
-from tttx.models import ShopProduct, ShopProductImages
 
 
 @transaction.atomic
