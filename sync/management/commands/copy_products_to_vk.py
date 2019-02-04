@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
+
 import requests
 from django.conf import settings
 from django.core.management import BaseCommand
@@ -25,12 +27,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         for product in ShopProduct.objects.all():
-            if product.update_date_changed():
+            if product.is_changed():
                 images = list(
                     ShopProductImages.objects.filter(product_id=product.id))
                 if images:
                     filename, url = self.get_image_url(product)
                     caption = f'{product.name}'
                     post_photo(caption, url, filename)
+                    product.saved_date = datetime.now()
 
 

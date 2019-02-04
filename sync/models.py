@@ -657,17 +657,12 @@ class ShopProduct(models.Model):
         managed = False
         db_table = 'shop_product'
 
-    def update_date_changed(self):
-        """ Апдейтим сохраненную дату изменения инфы в ВК если изменилась
-        дата изменения продукта """
-        if not self.edit_datetime:
-            self.saved_date = datetime.now()
-            self.edit_datetime = datetime.now()
+    def is_changed(self):
+        """ Проверям не изменялся ли продукт """
+        if not self.edit_datetime or not self.saved_date:
+            return False
+        elif self.saved_date != self.edit_datetime:
             return True
-        else:
-            if self.saved_date == self.edit_datetime:
-                self.saved_date = self.edit_datetime
-                return True
         return False
 
 
