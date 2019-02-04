@@ -23,7 +23,17 @@ def test(request):
 
 
 def albums_list(request):
-    # comments_list = []
+
+    photos = requests.get('https://api.vk.com/method/photos.get', params={
+        'access_token': settings.VK_ACCESS_TOKEN,
+        'owner_id': '-140432051',
+        'album_id': '258600569',
+        'rev': 1,
+        'offset': 0,
+        'count': 1000,
+        'v': '5.92'
+    }).json()['response']['items']
+
     comments = requests.get('https://api.vk.com/method/photos.getAllComments', params={
         'owner_id': '-140432051',
         'album_id': '258600569',
@@ -34,22 +44,20 @@ def albums_list(request):
         'access_token': settings.VK_ACCESS_TOKEN,
     }).json()['response']['items']
 
-    # for comment in comments:
-    #     a = CommentsForTeamplate
-    #     a.user_id = comment['from_id']
-    #     a.text = comment['text']
-    #     a.datetime = comment['date']
-    #     if comment['likes']['count'] != 0:
-    #         a.like = True
-    #     else:
-    #         a.like = False
+    print(photos)
+    print(comments)
+    photoslist = {}
+    for photo in photos:
+        photoslist[photo['id']] = photo['sizes'][2]['url']
 
-        # comments_list.append(a)
 
-    # print(len(comments_list))
-    # print(comments_list[4].text)
+    updcomment =[]
+    for comment in comments:
+        comment['photolink'] = photoslist[comment['pid']]
+        comment['time'] = datetime.utcfromtimestamp(comment['date']).strftime('%Y-%m-%d %H:%M:%S')
+        updcomment.append(comment)
 
-    return render(request, 'sync/index.html', context={'comments': comments})
+    return render(request, 'sync/index.html', context={'comments': updcomment})
     # return HttpResponse(comments_list[4].text)
 
 
