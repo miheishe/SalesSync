@@ -9,13 +9,6 @@ from sync.models import ShopProduct, ShopProductImages, ShopProductParams
 import requests
 # from django.http import HttpResponse
 
-class CommentsForTeamplate(object):
-
-    def __init__(self, datetime, user_id, text, like):
-        self.datetime = datetime
-        self.user_id = user_id
-        self.text = text
-        self.like = like
 
 @transaction.atomic
 def test(request):
@@ -27,7 +20,7 @@ def albums_list(request):
     photos = requests.get('https://api.vk.com/method/photos.get', params={
         'access_token': settings.VK_ACCESS_TOKEN,
         'owner_id': '-140432051',
-        'album_id': '258600569',
+        'album_id': '260346218',
         'rev': 1,
         'offset': 0,
         'count': 1000,
@@ -36,7 +29,7 @@ def albums_list(request):
 
     comments = requests.get('https://api.vk.com/method/photos.getAllComments', params={
         'owner_id': '-140432051',
-        'album_id': '258600569',
+        'album_id': '260346218',
         'need_likes': 1,
         'offset': 0,
         'count': 10000,
@@ -46,15 +39,41 @@ def albums_list(request):
 
     print(photos)
     print(comments)
+
+
     photoslist = {}
     for photo in photos:
         photoslist[photo['id']] = photo['sizes'][2]['url']
+
+
+    users_ids = set()
+    for comment in comments:
+        users_ids.add(str(comment['from_id']))
+
+    users_ids_list = ','.join(users_ids)
+
+
+    users = requests.get('https://api.vk.com/method/users.get', params={
+        'user_ids': users_ids_list,
+        'fields': 'first_name, last_name',
+        'name_case': 'nom',
+        'v': '5.92',
+        'access_token': settings.VK_ACCESS_TOKEN
+        }).json()['response']
+
+    users_ids_names ={}
+    for user in users:
+        users_ids_names[user['id']] = user['first_name'] + ' ' + user['last_name']
+
+
+    print(users)
 
 
     updcomment =[]
     for comment in comments:
         comment['photolink'] = photoslist[comment['pid']]
         comment['time'] = datetime.utcfromtimestamp(comment['date']).strftime('%Y-%m-%d %H:%M:%S')
+        comment['username'] = users_ids_names[comment['from_id']]
         updcomment.append(comment)
 
     return render(request, 'sync/index.html', context={'comments': updcomment})
