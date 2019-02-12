@@ -20,16 +20,18 @@ def albums_list(request):
     photos = requests.get('https://api.vk.com/method/photos.get', params={
         'access_token': settings.VK_ACCESS_TOKEN,
         'owner_id': '-140432051',
-        'album_id': '260346218',
+        'album_id': '260801467',
         'rev': 1,
         'offset': 0,
         'count': 1000,
         'v': '5.92'
     }).json()['response']['items']
 
+    print(photos)
+
     comments = requests.get('https://api.vk.com/method/photos.getAllComments', params={
         'owner_id': '-140432051',
-        'album_id': '260346218',
+        'album_id': '260801467',
         'need_likes': 1,
         'offset': 0,
         'count': 10000,
