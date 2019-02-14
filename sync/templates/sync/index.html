@@ -5,17 +5,49 @@
 {% endblock %}
 
 {% block content %}
-	<h1 class="mb-5">Comments:</h1>
-	{% for comment in comments %}
-		<div class="card mb-4">
-			<div class="card-header">
-				{{ comment.time }}
-			</div>
-			<div class="card-body">
-                <img src="{{ comment.photolink }}">
-				<h5 class="card-title">{{ comment.username }}</h5>
-				<p class="card-text">{{ comment.text }}</p>
-			</div>
+	<div class="card card-small blog-comments">
+		<div class="card-header border-bottom">
+			<h6 class="m-0">Комментарии</h6>
 		</div>
-	{% endfor %}
+		{% for comment in comments %}
+		<div class="card-body p-0">
+			<div class="blog-comments__item d-flex p-3">
+				<div class="blog-comments__avatar mr-3">
+					<img src="{{ comment.photolink }}" alt="photo">
+				</div>
+				<div class="blog-comments__content">
+					<div class="blog-comments__meta text-muted">
+						<a class="text-secondary" href="#">{{ comment.username }}</a>
+						<span class="text-muted">– {{ comment.time }}</span>
+					</div>
+					<p class="m-0 my-1 mb-2 text-muted">{{ comment.text }}</p>
+					<div class="blog-comments__actions">
+						<div class="btn-group btn-group-sm">
+							<button type="button" class="btn btn-white">
+								<span class="text-success">
+								<i class="material-icons">check</i>
+								</span> 100
+							</button>
+							<button type="button" class="btn btn-white">
+								<span class="text-success">
+								<i class="material-icons">check</i>
+								</span> 200
+							</button>
+							<button type="button" class="btn btn-white">
+								<span class="text-success">
+								<i class="material-icons">check</i>
+								</span> 300
+							</button>
+                            <button type="button" class="btn btn-white">
+								<span class="text-danger">
+								<i class="material-icons">clear</i>
+								</span> Игнор
+							</button>
+						</div>
+					</div>
+				</div>
+			</di>
+		</div>
+		{% endfor %}
+	</div>
 {% endblock %}

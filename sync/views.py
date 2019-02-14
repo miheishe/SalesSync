@@ -78,7 +78,7 @@ def albums_list(request):
         comment['username'] = users_ids_names[comment['from_id']]
         updcomment.append(comment)
 
-    return render(request, 'sync/index.html', context={'comments': updcomment})
+    return render(request, 'sync/index.html', context={'comments': updcomment[::-1]})
     # return HttpResponse(comments_list[4].text)
 
 

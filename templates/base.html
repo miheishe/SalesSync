@@ -1,8 +1,21 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Shards Dashboard Lite - Free Bootstrap Admin Template – DesignRevision</title>
+    <meta name="description" content="Smorodina admin center">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" id="main-stylesheet" data-version="1.0.0" href="{% static '/styles/shards-dashboards.1.0.0.min.css' %}">
+    <link rel="stylesheet" href="{% static '/styles/extras.1.0.0.min.css' %}">
+    <script src="https://connect.facebook.net/en_US/all.js?hash=5c8699e27da1ebdc6b03abdb1d42804e&amp;ua=modern_es6" async=""></script>
+    <script type="text/javascript" async="" src="https://platform.twitter.com/widgets.js"></script>
+    <script id="facebook-jssdk" src="https://connect.facebook.net/en_US/all.js#xfbml=1"></script>
+    <script async="" defer="" src="https://buttons.github.io/buttons.js"></script>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 	<title>
 		{% block title %}
@@ -39,7 +52,7 @@
 
 	<div class="container mt-5">
 		<div class="row">
-			<div class="col-6 offset-md-2">
+			<div class="col-12">
 				{% block content %}
 					Nothing is happen
 				{% endblock %}
