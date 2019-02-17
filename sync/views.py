@@ -7,7 +7,7 @@ from sync.models import WaContact
 from sync.models import ShopProduct, ShopProductImages, ShopProductParams
 # from sync.models import CommentsForTeamplate
 import requests
-# from django.http import HttpResponse
+from django.http import HttpResponse
 
 
 @transaction.atomic
@@ -27,7 +27,6 @@ def albums_list(request):
         'v': '5.92'
     }).json()['response']['items']
 
-    print(photos)
 
     comments = requests.get('https://api.vk.com/method/photos.getAllComments', params={
         'owner_id': '-140432051',
@@ -44,9 +43,10 @@ def albums_list(request):
 
 
     photoslist = {}
+    photoslinks = {}
     for photo in photos:
         photoslist[photo['id']] = photo['sizes'][2]['url']
-
+        photoslinks[photo['id']] = 'https://vk.com/photo' + str(photo['owner_id']) + '_' + str(photo['id'])
 
     users_ids = set()
     for comment in comments:
@@ -69,6 +69,7 @@ def albums_list(request):
 
 
     print(users)
+    print(photoslinks)
 
 
     updcomment =[]
@@ -76,12 +77,14 @@ def albums_list(request):
         comment['photolink'] = photoslist[comment['pid']]
         comment['time'] = datetime.utcfromtimestamp(comment['date']).strftime('%Y-%m-%d %H:%M:%S')
         comment['username'] = users_ids_names[comment['from_id']]
+        comment['vk_link'] = photoslinks[comment['pid']]
         updcomment.append(comment)
 
+    print('UPDCOMMENT:')
+    print(updcomment)
+
     return render(request, 'sync/index.html', context={'comments': updcomment[::-1]})
-    # return HttpResponse(comments_list[4].text)
 
+def add_like(request):
 
-# def album_detail(request, slug):
-#     album = Post.objects.get(slug__iexact=slug)
-#     return render(request, 'blog/post_detail.html', context={'post': album})
+    return HttpResponse('Hello!')

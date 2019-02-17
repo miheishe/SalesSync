@@ -13,7 +13,7 @@
 		<div class="card-body p-0">
 			<div class="blog-comments__item d-flex p-3">
 				<div class="blog-comments__avatar mr-3">
-					<img src="{{ comment.photolink }}" alt="photo">
+                    <a href="{{ comment.vk_link }}"><img src="{{ comment.photolink }}" alt="photo"></a>
 				</div>
 				<div class="blog-comments__content">
 					<div class="blog-comments__meta text-muted">
@@ -21,7 +21,7 @@
 						<span class="text-muted">– {{ comment.time }}</span>
 					</div>
 					<p class="m-0 my-1 mb-2 text-muted">{{ comment.text }}</p>
-					<div class="blog-comments__actions">
+					<!-- <div class="blog-comments__actions">
 						<div class="btn-group btn-group-sm">
 							<button type="button" class="btn btn-white">
 								<span class="text-success">
@@ -43,10 +43,28 @@
 								<i class="material-icons">clear</i>
 								</span> Игнор
 							</button>
-						</div>
+
+						</div> -->
+                        <div class="blog-comments__actions">
+                            <div class="btn-group btn-group-sm">
+{#                                <select id="inputState" class="form-control">#}
+{#                                <option selected="">Количество</option>#}
+{#                                <option>10</option>#}
+{#                                <option>25</option>#}
+{#                                <option>100</option>#}
+{#                                <option>150</option>#}
+{#                                <option>200</option>#}
+{#                                <option>250</option>#}
+{#                                <option>300</option>#}
+{#                            </select>#}
+                            <form action= '{% url add_like %}' method="POST">
+                                <input type="submit" value="Toggle" id="toggle1" />
+                            </form>
+{#                            <button href= {% url '/add_like' %} type="button" class="mb-2 btn btn-outline-danger ml-2">❤</button>#}
+                        </div>
 					</div>
 				</div>
-			</di>
+			</div>
 		</div>
 		{% endfor %}
 	</div>
