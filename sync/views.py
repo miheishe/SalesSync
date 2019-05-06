@@ -86,5 +86,5 @@ def albums_list(request):
     return render(request, 'sync/index.html', context={'comments': updcomment[::-1]})
 
 def add_like(request):
-
-    return HttpResponse('Hello!')
+    print(request.body)
+    return HttpResponse('hello')

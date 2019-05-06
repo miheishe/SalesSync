@@ -5,5 +5,5 @@ from .views import *
 
 urlpatterns = [
 	path('', albums_list, name='albums_list'),
-	url(r'whatever^$', add_like,name='add_like'),
+	url('add_like/', add_like, name='add_like'),
 ]
