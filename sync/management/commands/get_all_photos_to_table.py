@@ -4,6 +4,7 @@ import time
 from django.conf import settings
 from django.core.management import BaseCommand
 from django.db import transaction
+import math
 
 from sync.models import ShopProduct, ShopProductImages
 
